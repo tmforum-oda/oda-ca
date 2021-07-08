@@ -63,7 +63,10 @@ async def exposedAPIs(meta, spec, status, body, namespace, labels, name, **kwarg
     # compare desired state (spec) with actual state (status) and initiate changes
     if status:  # if status exists (i.e. this is not a new component)
         # update a component - look in old and new to see if we need to delete any API resources
-        oldExposedAPIs = status['exposedAPIs']
+        if 'exposedAPIs' in status.keys():
+            oldExposedAPIs = status['exposedAPIs']
+        else:
+            oldExposedAPIs = {}
         newExposedAPIs = spec['coreFunction']['exposedAPIs']
         # find apis in old that are missing in new
         deletedAPIs = []
@@ -115,6 +118,8 @@ def deleteAPI(deleteAPIName, componentName, status, namespace):
     :meta private:
     """
     logger.debug(f'[deleteAPI/{namespace}/{componentName}] Delete API {deleteAPIName} if it appears in new status (i.e. it had been created)')
+    if not 'exposedAPIs' in status.keys():
+        return
     for api in status['exposedAPIs']:
         if api['name'] == deleteAPIName:
             logger.info(f"[deleteAPI/{namespace}/{componentName}] delete api {api['name']}")
@@ -393,6 +398,7 @@ async def updateAPIReady(meta, spec, status, body, namespace, labels, name, **kw
 
 def patchComponent(namespace, name, component):
     """Helper function to patch a component.
+
     
     Args:
         * namespace (String): The namespace for the Component resource
@@ -404,6 +410,7 @@ def patchComponent(namespace, name, component):
 
     :meta private:
     """
+
     try:
         custom_objects_api = kubernetes.client.CustomObjectsApi()
         api_response = custom_objects_api.patch_namespaced_custom_object(
