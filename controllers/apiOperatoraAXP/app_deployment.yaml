@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: custom-operator
+    namespace: axp
+spec:
+    selector:
+        matchLabels:
+            app: custom-operator
+    template:
+        metadata:
+            labels:
+                app: custom-operator
+        spec:
+            serviceAccountName: custom-operator
+            containers:
+            - image: gcr.io/axpdte-synergy-rnd/operator:custom
+              name: custom-operator
+              imagePullPolicy: Always

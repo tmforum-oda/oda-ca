@@ -1,0 +1,8 @@
+docker build -t gcr.io/axpdte-synergy-rnd/operator:custom .
+docker push gcr.io/axpdte-synergy-rnd/operator:custom
+kubectl delete -f service_account.yml
+kubectl create -f service_account.yml
+kubectl delete -f service_account_binding.yml
+kubectl create -f service_account_binding.yml
+kubectl delete -f app_deployment.yaml
+kubectl create -f app_deployment.yaml
