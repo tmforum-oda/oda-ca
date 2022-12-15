@@ -343,16 +343,16 @@ def buildAPIStatus(parent_api_spec, parent_api_status, ingressTarget, inAPIName,
         else:
             logWrapper(logging.WARNING, 'buildAPIStatus', inHandler, 'api/' + inAPIName, componentName, "Ingress target does not contain ip or hostname", "")
     else:    #if api doesn't specify hostname then use ip
-        if 'hostname' in ingressTarget.keys():
-            parent_api_status['apiStatus']['url'] = HTTP_SCHEME + ingressTarget['hostname'] + parent_api_spec['path']
-            if 'developerUI' in parent_api_spec:
-                parent_api_status['apiStatus']['developerUI'] = HTTP_SCHEME + ingressTarget['hostname'] + parent_api_spec['developerUI']
-            parent_api_status['apiStatus']['ip'] = ingressTarget['hostname']
-        elif 'ip' in ingressTarget.keys():
+        if 'ip' in ingressTarget.keys():
             parent_api_status['apiStatus']['url'] = HTTP_SCHEME + ingressTarget['ip'] + parent_api_spec['path']
             if 'developerUI' in parent_api_spec:
                 parent_api_status['apiStatus']['developerUI'] = HTTP_SCHEME + ingressTarget['ip'] + parent_api_spec['developerUI']
             parent_api_status['apiStatus']['ip'] = ingressTarget['ip']
+        elif 'hostname' in ingressTarget.keys():
+            parent_api_status['apiStatus']['url'] = HTTP_SCHEME + ingressTarget['hostname'] + parent_api_spec['path']
+            if 'developerUI' in parent_api_spec:
+                parent_api_status['apiStatus']['developerUI'] = HTTP_SCHEME + ingressTarget['hostname'] + parent_api_spec['developerUI']
+            parent_api_status['apiStatus']['ip'] = ingressTarget['hostname']
         else:
             raise kopf.TemporaryError("Ingress target does not contain ip or hostname")
     return parent_api_status
